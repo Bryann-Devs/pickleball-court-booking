@@ -7,7 +7,7 @@ export default function OwnerSchedulePage() {
       <PageHeader
         eyebrow="Court owner"
         title="Schedule"
-        description="Availability management will live here once court data is connected."
+        description="Schedule management will be added after court listings are ready."
       />
 
       <EmptyState

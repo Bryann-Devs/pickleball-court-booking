@@ -1,6 +1,5 @@
-import { BookingCard } from "@/components/BookingCard";
+import { EmptyState } from "@/components/EmptyState";
 import { PageHeader } from "@/components/PageHeader";
-import { bookings } from "@/lib/placeholders";
 
 export default function OwnerBookingsPage() {
   return (
@@ -8,14 +7,13 @@ export default function OwnerBookingsPage() {
       <PageHeader
         eyebrow="Court owner"
         title="Owner bookings"
-        description="A placeholder queue for future reservation approvals and changes."
+        description="Booking management will be added after court listings are ready."
       />
 
-      <section className="grid gap-4 md:grid-cols-2">
-        {bookings.map((booking) => (
-          <BookingCard key={`${booking.court}-${booking.date}`} {...booking} />
-        ))}
-      </section>
+      <EmptyState
+        title="Booking tools coming soon"
+        description="Court booking requests will appear here once booking logic is implemented."
+      />
     </div>
   );
 }

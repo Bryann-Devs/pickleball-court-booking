@@ -11,8 +11,9 @@ type AppShellProps = {
 export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname();
   const isLandingPage = pathname === "/";
+  const isDashboardPage = pathname.startsWith("/owner") || pathname.startsWith("/admin");
 
-  if (isLandingPage) {
+  if (isLandingPage || isDashboardPage) {
     return <>{children}</>;
   }
 

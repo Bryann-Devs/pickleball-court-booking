@@ -1,6 +1,5 @@
-import { CourtCard } from "@/components/CourtCard";
 import { PageHeader } from "@/components/PageHeader";
-import { courts } from "@/lib/placeholders";
+import { PublicCourtsList } from "@/components/PublicCourtsList";
 
 export default function CourtsPage() {
   return (
@@ -8,14 +7,10 @@ export default function CourtsPage() {
       <PageHeader
         eyebrow="Player"
         title="Courts"
-        description="Browse placeholder court listings prepared for future availability and booking flows."
+        description="Browse approved pickleball courts."
       />
 
-      <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {courts.map((court) => (
-          <CourtCard key={court.name} {...court} />
-        ))}
-      </section>
+      <PublicCourtsList />
     </div>
   );
 }
