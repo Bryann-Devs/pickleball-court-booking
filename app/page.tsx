@@ -1,68 +1,96 @@
 import Image from "next/image";
 import Link from "next/link";
-import { PageHeader } from "@/components/PageHeader";
 
-const roleCards = [
-  {
-    title: "Players",
-    description: "Find nearby courts, compare availability, and keep upcoming bookings in one place."
-  },
-  {
-    title: "Court Owners",
-    description: "Prepare court listings, booking views, and schedule tools for future operations."
-  },
-  {
-    title: "Admins",
-    description: "Set up the foundation for managing users, courts, bookings, and platform health."
-  }
+const navItems = [
+  { href: "/", label: "Home" },
+  { href: "/courts", label: "Courts" },
+  { href: "/#how-it-works", label: "How It Works" },
+  { href: "/register?role=court_owner", label: "For Owners" },
+  { href: "/login", label: "Sign In" }
+];
+
+const steps = [
+  "Find an open court",
+  "Choose your time slot",
+  "Reserve and play"
 ];
 
 export default function HomePage() {
   return (
-    <div className="space-y-8">
-      <section className="grid gap-6 lg:grid-cols-[1fr_0.95fr] lg:items-center">
-        <div className="space-y-5">
-          <PageHeader
-            eyebrow="PickleBook"
-            title="Book pickleball courts without the back-and-forth."
-            description="A centralized booking and management platform for players, court owners, and admins."
-          />
+    <div className="bg-slate-950 text-white">
+      <section className="relative min-h-screen overflow-hidden">
+        <Image
+          src="/images/landing-bg.avif"
+          alt="Pickleball court background"
+          fill
+          priority
+          className="object-cover"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-slate-950/68" />
 
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Link
-              href="/courts"
-              className="rounded-lg bg-court-600 px-5 py-3 text-center text-sm font-semibold text-white shadow-soft transition hover:bg-court-500"
-            >
-              Browse courts
+        <header className="absolute inset-x-0 top-0 z-20">
+          <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
+            <Link href="/" className="text-lg font-bold text-white">
+              PickleBook
             </Link>
-            <Link
-              href="/owner/dashboard"
-              className="rounded-lg border border-slate-200 bg-white px-5 py-3 text-center text-sm font-semibold text-slate-800 transition hover:border-court-200 hover:text-court-700"
-            >
-              Owner dashboard
+
+            <nav aria-label="Landing navigation" className="hidden items-center gap-6 md:flex">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="text-sm font-semibold text-white/82 transition hover:text-lime-300"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+
+            <Link href="/login" className="text-sm font-semibold text-white transition hover:text-lime-300 md:hidden">
+              Sign In
             </Link>
           </div>
-        </div>
+        </header>
 
-        <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-slate-200 shadow-soft sm:aspect-[16/10]">
-          <Image
-            src="/images/court-hero.png"
-            alt="Outdoor pickleball court ready for play"
-            fill
-            priority
-            className="object-cover"
-            sizes="(min-width: 1024px) 48vw, 100vw"
-          />
+        <div className="relative z-10 flex min-h-screen items-center justify-center px-4 py-24 text-center sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-4xl space-y-6">
+            <h1 className="text-5xl font-black leading-tight tracking-normal text-white sm:text-6xl lg:text-7xl">
+              Your Next Game Starts With an Open Slot.
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg leading-8 text-white/84 sm:text-xl">
+              Find available pickleball courts, choose a time that works, and reserve your spot.
+            </p>
+            <div className="mx-auto flex max-w-sm flex-col gap-3 pt-2 sm:max-w-none sm:flex-row sm:justify-center">
+              <Link
+                href="/courts"
+                className="rounded-lg bg-lime-400 px-6 py-3 text-center text-sm font-bold text-slate-950 shadow-soft transition hover:bg-lime-300"
+              >
+                Find a Slot
+              </Link>
+              <Link
+                href="/register?role=court_owner"
+                className="rounded-lg border border-lime-300/80 bg-slate-950/30 px-6 py-3 text-center text-sm font-bold text-white backdrop-blur-sm transition hover:bg-white/10 hover:text-lime-100"
+              >
+                For Court Owners
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-3">
-        {roleCards.map((role) => (
-          <article key={role.title} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-            <h2 className="text-base font-semibold text-slate-950">{role.title}</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600">{role.description}</p>
-          </article>
-        ))}
+      <section id="how-it-works" className="bg-slate-50 px-4 py-14 text-slate-950 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="text-2xl font-bold sm:text-3xl">How It Works</h2>
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
+            {steps.map((step, index) => (
+              <div key={step} className="rounded-lg border border-slate-200 bg-white p-5">
+                <p className="text-sm font-bold text-court-600">Step {index + 1}</p>
+                <h3 className="mt-2 text-lg font-semibold text-slate-950">{step}</h3>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
     </div>
   );
