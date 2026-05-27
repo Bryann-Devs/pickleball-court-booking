@@ -111,19 +111,5 @@ export async function getCurrentUserProfile(): Promise<CurrentUserProfile> {
   }
 
   const profile = await fetchProfile(supabase, data.user.id);
-
-  if (profile?.role) {
-    return { isConfigured: true, user: data.user, profile };
-  }
-
-  return {
-    isConfigured: true,
-    user: data.user,
-    profile: {
-      id: data.user.id,
-      full_name: null,
-      phone: null,
-      role: getRoleFromUserMetadata(data.user)
-    }
-  };
+  return { isConfigured: true, user: data.user, profile };
 }

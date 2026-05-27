@@ -41,6 +41,12 @@ export function PublicCourtsList() {
         .order("created_at", { ascending: false });
 
       if (courtsError) {
+        if (courtsError.message.toLowerCase().includes("permission denied")) {
+          setCourts([]);
+          setIsLoading(false);
+          return;
+        }
+
         setError(courtsError.message);
         setIsLoading(false);
         return;
@@ -65,7 +71,7 @@ export function PublicCourtsList() {
     return (
       <EmptyState
         title="No approved courts yet"
-        description="Approved pickleball courts will appear here once court owners submit listings and admins approve them."
+        description="Approved pickleball courts will appear here once court owners submit listings and admins approve them. If you expected courts here, run the Supabase courts RLS SQL fix."
       />
     );
   }

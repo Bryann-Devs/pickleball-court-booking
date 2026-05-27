@@ -24,7 +24,9 @@ const linksByRole: Record<DashboardRole, DashboardLink[]> = {
     { href: "/admin/dashboard", label: "Dashboard" },
     { href: "/admin/courts", label: "Courts" },
     { disabled: true, href: "/admin/users", label: "Users later" },
-    { disabled: true, href: "/admin/bookings", label: "Bookings later" }
+    { disabled: true, href: "/admin/bookings", label: "Bookings later" },
+    { disabled: true, href: "/admin/analytics", label: "Analytics later" },
+    { disabled: true, href: "/admin/settings", label: "Settings later" }
   ]
 };
 

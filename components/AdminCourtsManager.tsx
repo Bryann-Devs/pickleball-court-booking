@@ -10,6 +10,7 @@ type AdminCourt = {
   address: string;
   city: string;
   court_count: number;
+  created_at: string;
   description: string | null;
   name: string;
   price_per_hour: number;
@@ -46,7 +47,7 @@ export function AdminCourtsManager() {
 
     const { data, error: courtsError } = await supabase
       .from("courts")
-      .select("id, name, address, city, description, price_per_hour, court_count, status")
+      .select("id, name, address, city, description, price_per_hour, court_count, status, created_at")
       .order("created_at", { ascending: false });
 
     if (courtsError) {
@@ -127,6 +128,9 @@ export function AdminCourtsManager() {
                   <h2 className="text-base font-semibold text-slate-950">{court.name}</h2>
                   <p className="mt-1 text-sm leading-6 text-slate-600">
                     {court.address}, {court.city}
+                  </p>
+                  <p className="mt-1 text-xs font-medium text-slate-500">
+                    Submitted {new Date(court.created_at).toLocaleDateString()}
                   </p>
                 </div>
                 <span className={`rounded-full px-3 py-1 text-xs font-semibold ${statusStyles[court.status]}`}>

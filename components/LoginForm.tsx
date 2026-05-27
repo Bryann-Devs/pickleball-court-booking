@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { fetchProfile, getDashboardPathForRole, getFallbackRoleForUser } from "@/lib/auth";
+import { fetchProfile, getDashboardPathForRole } from "@/lib/auth";
 import { createSupabaseBrowserClient } from "@/lib/supabase";
 
 export function LoginForm() {
@@ -57,8 +57,14 @@ export function LoginForm() {
       }
 
       const profile = await fetchProfile(supabase, data.user.id);
-      const role = profile?.role ?? getFallbackRoleForUser(data.user);
-      const fallbackPath = getDashboardPathForRole(role);
+
+      if (!profile?.role) {
+        setError("Login worked, but your profile role could not be loaded. Please check the profiles table and RLS setup.");
+        setIsLoading(false);
+        return;
+      }
+
+      const fallbackPath = getDashboardPathForRole(profile.role);
       const nextPath = searchParams.get("next");
 
       router.replace(nextPath || fallbackPath);
