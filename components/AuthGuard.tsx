@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { getAuthStatus } from "@/lib/auth";
+import { getCurrentUserProfile, getDashboardPathForRole, type UserRole } from "@/lib/auth";
 
 type AuthGuardProps = {
+  allowedRoles?: UserRole[];
   children: React.ReactNode;
 };
 
-export function AuthGuard({ children }: AuthGuardProps) {
+export function AuthGuard({ allowedRoles, children }: AuthGuardProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [status, setStatus] = useState<"checking" | "allowed">("checking");
@@ -17,7 +18,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
     let isMounted = true;
 
     async function checkAuth() {
-      const auth = await getAuthStatus();
+      const auth = await getCurrentUserProfile();
 
       if (!isMounted) {
         return;
@@ -29,6 +30,13 @@ export function AuthGuard({ children }: AuthGuardProps) {
         return;
       }
 
+      const role = auth.profile?.role ?? null;
+
+      if (allowedRoles && (!role || !allowedRoles.includes(role))) {
+        router.replace(getDashboardPathForRole(role));
+        return;
+      }
+
       setStatus("allowed");
     }
 
@@ -37,7 +45,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
     return () => {
       isMounted = false;
     };
-  }, [pathname, router]);
+  }, [allowedRoles, pathname, router]);
 
   if (status === "checking") {
     return (

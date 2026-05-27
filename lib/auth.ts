@@ -15,7 +15,13 @@ export type AuthStatus = {
   user: User | null;
 };
 
-export function getRoleRedirect(role: UserRole | null | undefined) {
+export type CurrentUserProfile = {
+  isConfigured: boolean;
+  user: User | null;
+  profile: Profile | null;
+};
+
+export function getDashboardPathForRole(role: UserRole | null | undefined) {
   if (role === "court_owner") {
     return "/owner/dashboard";
   }
@@ -26,6 +32,8 @@ export function getRoleRedirect(role: UserRole | null | undefined) {
 
   return "/courts";
 }
+
+export const getRoleRedirect = getDashboardPathForRole;
 
 export async function getAuthStatus(): Promise<AuthStatus> {
   const supabase = createSupabaseBrowserClient();
@@ -55,4 +63,22 @@ export async function fetchProfile(supabase: SupabaseClient, userId: string): Pr
   }
 
   return data as Profile;
+}
+
+export async function getCurrentUserProfile(): Promise<CurrentUserProfile> {
+  const supabase = createSupabaseBrowserClient();
+
+  if (!supabase) {
+    return { isConfigured: false, user: null, profile: null };
+  }
+
+  const { data, error } = await supabase.auth.getUser();
+
+  if (error || !data.user) {
+    return { isConfigured: true, user: null, profile: null };
+  }
+
+  const profile = await fetchProfile(supabase, data.user.id);
+
+  return { isConfigured: true, user: data.user, profile };
 }

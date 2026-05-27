@@ -5,5 +5,5 @@ export default function OwnerLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <AuthGuard>{children}</AuthGuard>;
+  return <AuthGuard allowedRoles={["court_owner", "admin"]}>{children}</AuthGuard>;
 }
