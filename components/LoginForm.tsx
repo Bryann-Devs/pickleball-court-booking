@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { fetchProfile, getDashboardPathForRole } from "@/lib/auth";
+import { fetchProfile, getDashboardPathForRole, getFallbackRoleForUser } from "@/lib/auth";
 import { createSupabaseBrowserClient } from "@/lib/supabase";
 
 export function LoginForm() {
@@ -13,6 +13,12 @@ export function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  function createTimeout(timeoutMs: number) {
+    return new Promise<null>((resolve) => {
+      window.setTimeout(() => resolve(null), timeoutMs);
+    });
+  }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -27,23 +33,40 @@ export function LoginForm() {
       return;
     }
 
-    const { data, error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
+    try {
+      const signInResult = await Promise.race([
+        supabase.auth.signInWithPassword({
+          email,
+          password
+        }),
+        createTimeout(15000)
+      ]);
 
-    if (signInError || !data.user) {
-      setError(signInError?.message ?? "Unable to log in. Please check your details and try again.");
+      if (!signInResult) {
+        setError("Login is taking too long. Please check your connection and try again.");
+        setIsLoading(false);
+        return;
+      }
+
+      const { data, error: signInError } = signInResult;
+
+      if (signInError || !data.user) {
+        setError(signInError?.message ?? "Unable to log in. Please check your details and try again.");
+        setIsLoading(false);
+        return;
+      }
+
+      const profile = await fetchProfile(supabase, data.user.id);
+      const role = profile?.role ?? getFallbackRoleForUser(data.user);
+      const fallbackPath = getDashboardPathForRole(role);
+      const nextPath = searchParams.get("next");
+
+      router.replace(nextPath || fallbackPath);
+      router.refresh();
+    } catch {
+      setError("Login succeeded, but the app could not finish loading your profile. Please try again.");
       setIsLoading(false);
-      return;
     }
-
-    const profile = await fetchProfile(supabase, data.user.id);
-    const fallbackPath = getDashboardPathForRole(profile?.role);
-    const nextPath = searchParams.get("next");
-
-    router.replace(nextPath || fallbackPath);
-    router.refresh();
   }
 
   return (

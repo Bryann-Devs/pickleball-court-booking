@@ -21,6 +21,29 @@ export type CurrentUserProfile = {
   profile: Profile | null;
 };
 
+function isUserRole(value: unknown): value is UserRole {
+  return value === "player" || value === "court_owner" || value === "admin";
+}
+
+function getRoleFromUserMetadata(user: User | null | undefined): UserRole | null {
+  const role = user?.user_metadata?.role;
+
+  return isUserRole(role) ? role : null;
+}
+
+async function withTimeout<T>(promise: PromiseLike<T>, timeoutMs: number): Promise<T | null> {
+  let timeoutId: ReturnType<typeof setTimeout>;
+
+  const timeout = new Promise<null>((resolve) => {
+    timeoutId = setTimeout(() => resolve(null), timeoutMs);
+  });
+
+  const result = await Promise.race([promise, timeout]);
+  clearTimeout(timeoutId!);
+
+  return result;
+}
+
 export function getDashboardPathForRole(role: UserRole | null | undefined) {
   if (role === "court_owner") {
     return "/owner/dashboard";
@@ -34,6 +57,10 @@ export function getDashboardPathForRole(role: UserRole | null | undefined) {
 }
 
 export const getRoleRedirect = getDashboardPathForRole;
+
+export function getFallbackRoleForUser(user: User | null | undefined): UserRole {
+  return getRoleFromUserMetadata(user) ?? "player";
+}
 
 export async function getAuthStatus(): Promise<AuthStatus> {
   const supabase = createSupabaseBrowserClient();
@@ -52,11 +79,16 @@ export async function getAuthStatus(): Promise<AuthStatus> {
 }
 
 export async function fetchProfile(supabase: SupabaseClient, userId: string): Promise<Profile | null> {
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("id, full_name, phone, role")
-    .eq("id", userId)
-    .single();
+  const result = await withTimeout(
+    supabase.from("profiles").select("id, full_name, phone, role").eq("id", userId).maybeSingle(),
+    5000
+  );
+
+  if (!result) {
+    return null;
+  }
+
+  const { data, error } = result;
 
   if (error) {
     return null;
@@ -80,5 +112,18 @@ export async function getCurrentUserProfile(): Promise<CurrentUserProfile> {
 
   const profile = await fetchProfile(supabase, data.user.id);
 
-  return { isConfigured: true, user: data.user, profile };
+  if (profile?.role) {
+    return { isConfigured: true, user: data.user, profile };
+  }
+
+  return {
+    isConfigured: true,
+    user: data.user,
+    profile: {
+      id: data.user.id,
+      full_name: null,
+      phone: null,
+      role: getRoleFromUserMetadata(data.user)
+    }
+  };
 }

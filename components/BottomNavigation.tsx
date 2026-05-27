@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getCurrentUserProfile, type UserRole } from "@/lib/auth";
+import { getCurrentUserProfile, getFallbackRoleForUser, type UserRole } from "@/lib/auth";
 import { createSupabaseBrowserClient } from "@/lib/supabase";
 
 type BottomItem = {
@@ -51,24 +51,26 @@ export function BottomNavigation() {
 
     let isMounted = true;
 
-    getCurrentUserProfile().then(({ user, profile }) => {
-      if (isMounted) {
-        setIsLoggedIn(Boolean(user));
-        setRole(profile?.role ?? null);
-      }
-    });
+    function loadProfile() {
+      getCurrentUserProfile().then(({ user, profile }) => {
+        if (isMounted) {
+          setIsLoggedIn(Boolean(user));
+          setRole(profile?.role ?? getFallbackRoleForUser(user));
+        }
+      });
+    }
+
+    loadProfile();
 
     const {
       data: { subscription }
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      const profile = session?.user ? await getCurrentUserProfile() : null;
-
-      if (!isMounted) {
-        return;
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (isMounted) {
+        setIsLoggedIn(Boolean(session?.user));
+        setRole(session?.user ? getFallbackRoleForUser(session.user) : null);
       }
 
-      setIsLoggedIn(Boolean(session?.user));
-      setRole(profile?.profile?.role ?? null);
+      window.setTimeout(loadProfile, 0);
     });
 
     return () => {
