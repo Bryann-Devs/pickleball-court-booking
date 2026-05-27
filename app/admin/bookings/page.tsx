@@ -1,6 +1,5 @@
-import { BookingCard } from "@/components/BookingCard";
+import { EmptyState } from "@/components/EmptyState";
 import { PageHeader } from "@/components/PageHeader";
-import { bookings } from "@/lib/placeholders";
 
 export default function AdminBookingsPage() {
   return (
@@ -8,14 +7,13 @@ export default function AdminBookingsPage() {
       <PageHeader
         eyebrow="Admin"
         title="Bookings"
-        description="Placeholder booking oversight for future admin workflows."
+        description="Reservation oversight will be available after booking logic is implemented."
       />
 
-      <section className="grid gap-4 md:grid-cols-2">
-        {bookings.map((booking) => (
-          <BookingCard key={`${booking.court}-${booking.date}`} {...booking} />
-        ))}
-      </section>
+      <EmptyState
+        title="Bookings coming soon"
+        description="Bookings will appear here once players can request court reservations."
+      />
     </div>
   );
 }

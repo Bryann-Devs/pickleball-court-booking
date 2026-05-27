@@ -1,4 +1,4 @@
-import { EmptyState } from "@/components/EmptyState";
+import { AdminUsersManager } from "@/components/AdminUsersManager";
 import { PageHeader } from "@/components/PageHeader";
 
 export default function AdminUsersPage() {
@@ -7,13 +7,10 @@ export default function AdminUsersPage() {
       <PageHeader
         eyebrow="Admin"
         title="Users"
-        description="Placeholder area for future player, court owner, and admin user management."
+        description="Review registered players, court owners, and admins."
       />
 
-      <EmptyState
-        title="No user records connected"
-        description="Supabase auth and profile queries will be added in a later implementation step."
-      />
+      <AdminUsersManager />
     </div>
   );
 }
