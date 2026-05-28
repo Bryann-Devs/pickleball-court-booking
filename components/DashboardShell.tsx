@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -43,8 +44,7 @@ export function DashboardShell({ children, role }: DashboardShellProps) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const links = linksByRole[role];
-  const isAdmin = role === "admin";
-  const title = isAdmin ? "Admin Portal" : "Owner Dashboard";
+  const title = role === "admin" ? "Admin Portal" : "Owner Portal";
 
   async function handleLogout() {
     const supabase = createSupabaseBrowserClient();
@@ -57,75 +57,54 @@ export function DashboardShell({ children, role }: DashboardShellProps) {
     router.refresh();
   }
 
-  if (!isAdmin) {
-    return (
-      <div className="min-h-screen bg-slate-50 lg:grid lg:grid-cols-[260px_1fr]">
-        <aside className="hidden border-r border-slate-200 bg-white lg:block">
-          <div className="sticky top-0 flex h-screen flex-col p-5">
-            <Link href="/" className="text-xl font-bold text-court-900">
-              PickleBook
-            </Link>
-            <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-slate-500">{title}</p>
-            <DashboardLinks links={links} pathname={pathname} variant="light" />
-            <LogoutButton onClick={handleLogout} variant="light" />
-          </div>
-        </aside>
-
-        <MobileDashboardHeader
-          handleLogout={handleLogout}
-          isOpen={isMobileOpen}
-          links={links}
-          pathname={pathname}
-          setIsOpen={setIsMobileOpen}
-          subtitle={title}
-          variant="light"
-        />
-
-        <main className="mx-auto w-full max-w-6xl px-4 py-5 sm:px-6 lg:px-8">{children}</main>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-[#f7f8f4] text-slate-950 lg:flex">
       <aside
-        className={`hidden shrink-0 bg-[linear-gradient(160deg,#073d30_0%,#052d25_52%,#03221d_100%)] text-white shadow-[8px_0_28px_rgba(15,23,42,0.08)] transition-all duration-300 lg:block ${
-          isCollapsed ? "w-20" : "w-64"
+        className={`fixed left-0 top-0 z-40 hidden h-screen shrink-0 overflow-hidden bg-[#002a20] text-white shadow-[8px_0_28px_rgba(15,23,42,0.08)] transition-all duration-300 lg:block ${
+          isCollapsed ? "w-[70px]" : "w-[200px]"
         }`}
       >
-        <div className="sticky top-0 flex h-screen flex-col px-4 py-6">
-          <div className={`flex items-start gap-3 ${isCollapsed ? "justify-center" : "justify-between"}`}>
-            <Link href="/" className={`min-w-0 items-center gap-3 ${isCollapsed ? "sr-only" : "flex"}`}>
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-lime-300/90 text-sm font-black text-emerald-950">
-                PB
-              </span>
-              <span>
-                <span className="block text-xl font-black tracking-tight text-white">PickleBook</span>
-                <span className="mt-1 block text-xs font-semibold tracking-wide text-emerald-200">Admin Portal</span>
-              </span>
-            </Link>
+        <div className={`relative z-10 flex h-screen flex-col ${isCollapsed ? "items-center px-3 py-9" : "px-4 py-7"}`}>
+          {isCollapsed ? (
             <button
               type="button"
-              onClick={() => setIsCollapsed((current) => !current)}
-              className="rounded-full border border-white/10 bg-white/10 p-2.5 text-emerald-50 transition hover:bg-white/15"
-              aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              onClick={() => setIsCollapsed(false)}
+              className="mb-4 flex h-5 w-8 items-center justify-center text-white/90 transition hover:text-white"
+              aria-label="Expand sidebar"
             >
-              <DashboardIcon name="menu" className="h-4 w-4" />
+              <CollapseIcon collapsed={isCollapsed} />
             </button>
-          </div>
-
-          {isCollapsed ? (
-            <Link
-              href="/"
-              className="mx-auto mt-5 flex h-10 w-10 items-center justify-center rounded-full bg-lime-300/90 text-sm font-black text-emerald-950"
-              aria-label="PickleBook"
-            >
-              PB
-            </Link>
-          ) : null}
+          ) : (
+            <div className="flex items-start gap-2">
+              <Link href="/" className="flex min-w-0 flex-1 items-start gap-2">
+                <Image
+                  src="/images/admin-pickleball-ball.png"
+                  alt=""
+                  width={34}
+                  height={34}
+                  className="h-8 w-8 shrink-0 object-contain"
+                  priority
+                />
+                <span>
+                  <span className="block text-[16px] font-semibold leading-5 tracking-tight text-white">PickleBook</span>
+                  <span className="mt-0.5 block text-[12px] font-medium leading-4 tracking-wide text-[#8be667]">{title}</span>
+                </span>
+              </Link>
+              <button
+                type="button"
+                onClick={() => setIsCollapsed(true)}
+                className="flex h-7 w-7 shrink-0 items-center justify-center text-white/90 transition hover:text-white"
+                aria-label="Collapse sidebar"
+              >
+                <CollapseIcon collapsed={isCollapsed} />
+              </button>
+            </div>
+          )}
 
           <DashboardLinks collapsed={isCollapsed} links={links} pathname={pathname} variant="dark" />
-          <LogoutButton collapsed={isCollapsed} onClick={handleLogout} variant="dark" />
+          <div className={`border-t border-white/30 ${isCollapsed ? "mt-5 w-10 pt-5" : "mx-3 mt-6 pt-6"}`}>
+            <LogoutButton collapsed={isCollapsed} onClick={handleLogout} variant="dark" />
+          </div>
         </div>
       </aside>
 
@@ -135,11 +114,17 @@ export function DashboardShell({ children, role }: DashboardShellProps) {
         links={links}
         pathname={pathname}
         setIsOpen={setIsMobileOpen}
-        subtitle="Admin Portal"
+        subtitle={title}
         variant="dark"
       />
 
-      <main className="w-full min-w-0 px-4 py-5 sm:px-6 lg:px-8 lg:py-8">{children}</main>
+      <main
+        className={`w-full min-w-0 px-4 py-5 transition-[padding] duration-300 sm:px-6 lg:px-8 lg:py-8 ${
+          isCollapsed ? "lg:pl-[102px]" : "lg:pl-[232px]"
+        }`}
+      >
+        {children}
+      </main>
     </div>
   );
 }
@@ -169,7 +154,7 @@ function MobileDashboardHeader({
     <div className="lg:hidden">
       <header
         className={`sticky top-0 z-40 border-b ${
-          isDark ? "border-white/10 bg-[#063a30] text-white" : "border-slate-200 bg-white text-slate-950"
+          isDark ? "border-white/10 bg-[#002a20] text-white" : "border-slate-200 bg-white text-slate-950"
         }`}
       >
         <div className="flex h-16 items-center justify-between px-4">
@@ -190,7 +175,7 @@ function MobileDashboardHeader({
           </button>
         </div>
         {isOpen ? (
-          <div className={`border-t px-4 py-3 ${isDark ? "border-white/10 bg-[#063a30]" : "border-slate-200 bg-white"}`}>
+          <div className={`border-t px-4 py-3 ${isDark ? "border-white/10 bg-[#002a20]" : "border-slate-200 bg-white"}`}>
             <DashboardLinks links={links} pathname={pathname} variant={variant} onNavigate={() => setIsOpen(false)} />
             <LogoutButton onClick={handleLogout} variant={variant} />
           </div>
@@ -210,16 +195,16 @@ type DashboardLinksProps = {
 
 function DashboardLinks({ collapsed = false, links, onNavigate, pathname, variant }: DashboardLinksProps) {
   return (
-    <nav aria-label="Dashboard navigation" className="mt-8 space-y-1.5">
+    <nav aria-label="Dashboard navigation" className={collapsed ? "mt-2 space-y-2.5" : "mt-7 space-y-1"}>
       {links.map((link) => {
         const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`);
         const className =
           variant === "dark"
-            ? `flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-bold transition ${
+            ? `flex items-center gap-3 rounded-xl text-[12px] font-medium transition ${
                 isActive
-                  ? "bg-white/10 text-white ring-1 ring-white/10"
-                  : "text-emerald-50/75 hover:bg-white/10 hover:text-white"
-              } ${collapsed ? "justify-center" : ""}`
+                  ? "bg-white/[0.13] text-white shadow-[0_12px_24px_rgba(0,0,0,0.12)]"
+                  : "text-white/80 hover:bg-white/10 hover:text-white"
+              } ${collapsed ? "h-10 w-10 justify-center" : "px-3.5 py-2.5"}`
             : `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold ${
                 isActive ? "bg-court-50 text-court-700" : "text-slate-600 hover:bg-slate-50 hover:text-court-700"
               }`;
@@ -244,8 +229,8 @@ type LogoutButtonProps = {
 function LogoutButton({ collapsed = false, onClick, variant }: LogoutButtonProps) {
   const className =
     variant === "dark"
-      ? `mt-auto flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3.5 py-3 text-sm font-bold text-emerald-50 transition hover:bg-white/10 ${
-          collapsed ? "justify-center" : ""
+      ? `flex items-center gap-3 text-[12px] font-medium text-white/90 transition hover:text-white ${
+          collapsed ? "h-8 w-10 justify-center" : "px-2 py-2"
         }`
       : "mt-auto flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 text-left text-sm font-semibold text-slate-700 hover:border-court-200 hover:text-court-700";
 
@@ -254,6 +239,15 @@ function LogoutButton({ collapsed = false, onClick, variant }: LogoutButtonProps
       <DashboardIcon name="logout" className="h-5 w-5 shrink-0" />
       <span className={collapsed ? "sr-only" : ""}>Log out</span>
     </button>
+  );
+}
+
+function CollapseIcon({ collapsed }: { collapsed: boolean }) {
+  return (
+    <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" viewBox="0 0 24 24">
+      <path d={collapsed ? "M15 6v12" : "M16 6v12"} />
+      <path d={collapsed ? "m9 8 4 4-4 4" : "m12 8-4 4 4 4"} />
+    </svg>
   );
 }
 
