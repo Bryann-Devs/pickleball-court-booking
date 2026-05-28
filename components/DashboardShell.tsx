@@ -87,34 +87,37 @@ export function DashboardShell({ children, role }: DashboardShellProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#f4f7f2] text-slate-950 lg:flex">
+    <div className="min-h-screen bg-[#f7f8f4] text-slate-950 lg:flex">
       <aside
-        className={`hidden shrink-0 bg-[#082f26] text-white shadow-2xl shadow-emerald-950/20 transition-all duration-300 lg:block ${
-          isCollapsed ? "w-24" : "w-72"
+        className={`hidden shrink-0 bg-[linear-gradient(160deg,#073d30_0%,#052d25_52%,#03221d_100%)] text-white shadow-[8px_0_28px_rgba(15,23,42,0.08)] transition-all duration-300 lg:block ${
+          isCollapsed ? "w-20" : "w-64"
         }`}
       >
-        <div className="sticky top-0 flex h-screen flex-col px-4 py-5">
+        <div className="sticky top-0 flex h-screen flex-col px-4 py-6">
           <div className={`flex items-start gap-3 ${isCollapsed ? "justify-center" : "justify-between"}`}>
-            <Link href="/" className={`min-w-0 ${isCollapsed ? "sr-only" : "block"}`}>
-              <span className="block text-xl font-black tracking-tight text-white">PickleBook</span>
-              <span className="mt-1 block text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200">
-                Admin Portal
+            <Link href="/" className={`min-w-0 items-center gap-3 ${isCollapsed ? "sr-only" : "flex"}`}>
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-lime-300/90 text-sm font-black text-emerald-950">
+                PB
+              </span>
+              <span>
+                <span className="block text-xl font-black tracking-tight text-white">PickleBook</span>
+                <span className="mt-1 block text-xs font-semibold tracking-wide text-emerald-200">Admin Portal</span>
               </span>
             </Link>
             <button
               type="button"
               onClick={() => setIsCollapsed((current) => !current)}
-              className="rounded-2xl border border-white/10 bg-white/10 p-3 text-emerald-50 transition hover:bg-white/15"
+              className="rounded-full border border-white/10 bg-white/10 p-2.5 text-emerald-50 transition hover:bg-white/15"
               aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             >
-              <DashboardIcon name="menu" className="h-5 w-5" />
+              <DashboardIcon name="menu" className="h-4 w-4" />
             </button>
           </div>
 
           {isCollapsed ? (
             <Link
               href="/"
-              className="mx-auto mt-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-lime-300 text-base font-black text-emerald-950"
+              className="mx-auto mt-5 flex h-10 w-10 items-center justify-center rounded-full bg-lime-300/90 text-sm font-black text-emerald-950"
               aria-label="PickleBook"
             >
               PB
@@ -166,7 +169,7 @@ function MobileDashboardHeader({
     <div className="lg:hidden">
       <header
         className={`sticky top-0 z-40 border-b ${
-          isDark ? "border-white/10 bg-[#082f26] text-white" : "border-slate-200 bg-white text-slate-950"
+          isDark ? "border-white/10 bg-[#063a30] text-white" : "border-slate-200 bg-white text-slate-950"
         }`}
       >
         <div className="flex h-16 items-center justify-between px-4">
@@ -187,7 +190,7 @@ function MobileDashboardHeader({
           </button>
         </div>
         {isOpen ? (
-          <div className={`border-t px-4 py-3 ${isDark ? "border-white/10 bg-[#082f26]" : "border-slate-200 bg-white"}`}>
+          <div className={`border-t px-4 py-3 ${isDark ? "border-white/10 bg-[#063a30]" : "border-slate-200 bg-white"}`}>
             <DashboardLinks links={links} pathname={pathname} variant={variant} onNavigate={() => setIsOpen(false)} />
             <LogoutButton onClick={handleLogout} variant={variant} />
           </div>
@@ -207,15 +210,15 @@ type DashboardLinksProps = {
 
 function DashboardLinks({ collapsed = false, links, onNavigate, pathname, variant }: DashboardLinksProps) {
   return (
-    <nav aria-label="Dashboard navigation" className="mt-7 space-y-2">
+    <nav aria-label="Dashboard navigation" className="mt-8 space-y-1.5">
       {links.map((link) => {
         const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`);
         const className =
           variant === "dark"
-            ? `flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold transition ${
+            ? `flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-bold transition ${
                 isActive
-                  ? "bg-lime-300 text-emerald-950 shadow-lg shadow-lime-400/20"
-                  : "text-emerald-50/80 hover:bg-white/10 hover:text-white"
+                  ? "bg-white/10 text-white ring-1 ring-white/10"
+                  : "text-emerald-50/75 hover:bg-white/10 hover:text-white"
               } ${collapsed ? "justify-center" : ""}`
             : `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold ${
                 isActive ? "bg-court-50 text-court-700" : "text-slate-600 hover:bg-slate-50 hover:text-court-700"
@@ -241,7 +244,7 @@ type LogoutButtonProps = {
 function LogoutButton({ collapsed = false, onClick, variant }: LogoutButtonProps) {
   const className =
     variant === "dark"
-      ? `mt-auto flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-bold text-emerald-50 transition hover:bg-white/10 ${
+      ? `mt-auto flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3.5 py-3 text-sm font-bold text-emerald-50 transition hover:bg-white/10 ${
           collapsed ? "justify-center" : ""
         }`
       : "mt-auto flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 text-left text-sm font-semibold text-slate-700 hover:border-court-200 hover:text-court-700";

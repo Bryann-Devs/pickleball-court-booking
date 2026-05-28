@@ -95,16 +95,16 @@ export function AdminAnalyticsSummary() {
   }, [courts, profiles]);
 
   if (error) {
-    return <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">{error}</p>;
+    return <p className="rounded-xl bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">{error}</p>;
   }
 
   return (
     <div className="space-y-6">
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {cards.map((card) => (
-          <article key={card.key} className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
+          <article key={card.key} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_10px_28px_rgba(15,23,42,0.045)]">
             <p className="text-sm font-black text-slate-600">{card.label}</p>
-            <p className="mt-3 text-3xl font-black text-slate-950">{isLoading ? "..." : stats[card.key as StatKey]}</p>
+            <p className="mt-3 text-3xl font-black text-[#071832]">{isLoading ? "..." : stats[card.key as StatKey]}</p>
           </article>
         ))}
       </section>
@@ -131,7 +131,7 @@ export function AdminAnalyticsSummary() {
         />
       </section>
 
-      <p className="rounded-[1.5rem] border border-emerald-100 bg-emerald-50 p-5 text-sm font-semibold leading-6 text-emerald-800 shadow-sm">
+      <p className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4 text-sm font-semibold leading-6 text-emerald-800 shadow-sm">
         Detailed booking analytics will be available after reservations are implemented.
       </p>
     </div>
@@ -162,11 +162,11 @@ function DistributionCard({
       : "#e2e8f0 0% 100%";
 
   return (
-    <article className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm">
-      <h2 className="text-lg font-black text-slate-950">{title}</h2>
+    <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_10px_28px_rgba(15,23,42,0.045)] sm:p-5">
+      <h2 className="text-base font-black text-[#071832]">{title}</h2>
       <div className="mt-5 flex flex-col items-center gap-5 sm:flex-row">
-        <div className="flex h-40 w-40 shrink-0 items-center justify-center rounded-full" style={{ background: `conic-gradient(${gradient})` }}>
-          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-white text-2xl font-black text-slate-950">
+        <div className="flex h-36 w-36 shrink-0 items-center justify-center rounded-full" style={{ background: `conic-gradient(${gradient})` }}>
+          <div className="flex h-[5.5rem] w-[5.5rem] items-center justify-center rounded-full bg-white text-2xl font-black text-[#071832]">
             {isLoading ? "..." : total}
           </div>
         </div>
@@ -198,8 +198,8 @@ function BarSummaryCard({
   const maxValue = Math.max(1, ...data.map((item) => item.value));
 
   return (
-    <article className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm">
-      <h2 className="text-lg font-black text-slate-950">{title}</h2>
+    <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_10px_28px_rgba(15,23,42,0.045)] sm:p-5">
+      <h2 className="text-base font-black text-[#071832]">{title}</h2>
       <div className="mt-5 space-y-4">
         {data.map((item) => (
           <div key={item.label}>

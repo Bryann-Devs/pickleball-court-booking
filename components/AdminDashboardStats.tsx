@@ -71,11 +71,9 @@ const statCards = [
   { helper: "Registered accounts", icon: "users", key: "totalUsers", label: "Total Users" },
   { helper: "Player profiles", icon: "player", key: "players", label: "Players" },
   { helper: "Court operators", icon: "owner", key: "courtOwners", label: "Court Owners" },
-  { helper: "Platform admins", icon: "shield", key: "admins", label: "Admins" },
   { helper: "All submitted courts", icon: "court", key: "totalCourts", label: "Total Courts" },
   { helper: "Need review", icon: "clock", key: "pendingCourts", label: "Pending Approvals" },
-  { helper: "Visible to players", icon: "check", key: "approvedCourts", label: "Approved Courts" },
-  { helper: "Declined submissions", icon: "x", key: "rejectedCourts", label: "Rejected Courts" }
+  { helper: "Visible to players", icon: "check", key: "approvedCourts", label: "Approved Courts" }
 ] as const;
 
 type StatKey = (typeof statCards)[number]["key"];
@@ -173,24 +171,23 @@ export function AdminDashboardStats() {
   }
 
   if (error) {
-    return <p className="rounded-3xl bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700 shadow-sm">{error}</p>;
+    return <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700 shadow-sm">{error}</p>;
   }
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6">
-      <section className="flex flex-col gap-4 rounded-[2rem] border border-white bg-white/80 p-5 shadow-soft sm:p-6 lg:flex-row lg:items-center lg:justify-between">
+    <div className="mx-auto max-w-7xl space-y-5">
+      <section className="flex flex-col gap-4 py-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-700">PickleBook Control Center</p>
-          <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Admin Dashboard</h1>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
+          <h1 className="text-3xl font-black tracking-tight text-[#071832] sm:text-4xl">Admin Dashboard</h1>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
             Monitor courts, users, approvals, and platform activity.
           </p>
         </div>
-        <div className="flex items-center gap-3 rounded-3xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
+        <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2.5 shadow-[0_8px_24px_rgba(15,23,42,0.05)]">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-50 text-slate-700">
             <AdminIcon name="bell" />
           </div>
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#082f26] text-sm font-black text-lime-200">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#071832] text-sm font-black text-white">
             {getInitials(adminProfile?.full_name)}
           </div>
           <div className="min-w-0">
@@ -201,47 +198,47 @@ export function AdminDashboardStats() {
       </section>
 
       {message ? (
-        <p className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700 shadow-sm" role="status">
+        <p className="rounded-xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700 shadow-sm" role="status">
           {message}
         </p>
       ) : null}
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {statCards.map((card) => (
-          <article key={card.key} className="rounded-[1.5rem] border border-slate-200/80 bg-white p-5 shadow-sm">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
+          <article
+            key={card.key}
+            className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_10px_28px_rgba(15,23,42,0.055)]"
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
                 <AdminIcon name={card.icon} />
               </div>
-              <span className="rounded-full bg-lime-100 px-3 py-1 text-[11px] font-black uppercase tracking-wide text-emerald-950">
-                Live
-              </span>
+              <p className="text-2xl font-black text-[#071832]">{isLoading ? "..." : stats[card.key as StatKey]}</p>
             </div>
-            <p className="mt-5 text-3xl font-black text-slate-950">{isLoading ? "..." : stats[card.key as StatKey]}</p>
-            <p className="mt-1 text-sm font-black text-slate-900">{card.label}</p>
-            <p className="mt-2 text-xs font-semibold text-slate-500">{card.helper}</p>
+            <p className="mt-3 text-sm font-bold text-slate-800">{card.label}</p>
+            <p className="mt-1 text-xs font-medium text-slate-500">{card.helper}</p>
           </article>
         ))}
       </section>
 
-      <section className="grid gap-5 xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.6fr)]">
+      <section className="grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(300px,0.65fr)]">
         <ActivityLineChart data={activityDays} isLoading={isLoading} />
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-1">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-1">
           <StatusBarChart
             data={[
               { color: "bg-amber-400", label: "Pending", value: stats.pendingCourts },
-              { color: "bg-emerald-500", label: "Approved", value: stats.approvedCourts },
-              { color: "bg-rose-500", label: "Rejected", value: stats.rejectedCourts },
-              { color: "bg-slate-400", label: "Inactive", value: stats.inactiveCourts }
+              { color: "bg-emerald-600", label: "Approved", value: stats.approvedCourts },
+              { color: "bg-rose-400", label: "Rejected", value: stats.rejectedCourts },
+              { color: "bg-slate-300", label: "Inactive", value: stats.inactiveCourts }
             ]}
             isLoading={isLoading}
             title="Court Submissions"
           />
           <DonutChart
             data={[
-              { color: "#10b981", label: "Players", value: stats.players },
-              { color: "#84cc16", label: "Court Owners", value: stats.courtOwners },
-              { color: "#082f26", label: "Admins", value: stats.admins }
+              { color: "#159a68", label: "Players", value: stats.players },
+              { color: "#7dd3bc", label: "Court Owners", value: stats.courtOwners },
+              { color: "#071832", label: "Admins", value: stats.admins }
             ]}
             isLoading={isLoading}
             title="User Roles"
@@ -249,7 +246,7 @@ export function AdminDashboardStats() {
         </div>
       </section>
 
-      <section className="grid gap-5 xl:grid-cols-[minmax(320px,0.75fr)_minmax(0,1.25fr)]">
+      <section className="grid gap-4 xl:grid-cols-[minmax(300px,0.72fr)_minmax(0,1.28fr)]">
         <RecentActivityCard activities={recentActivity} isLoading={isLoading} />
         <PendingApprovalsCard
           courts={pendingCourts}
@@ -354,26 +351,26 @@ function ActivityLineChart({ data, isLoading }: { data: ActivityDay[]; isLoading
   const hasActivity = data.some((day) => day.users > 0 || day.courts > 0);
 
   return (
-    <article className="rounded-[1.75rem] border border-slate-200/80 bg-white p-5 shadow-sm">
+    <article className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_10px_28px_rgba(15,23,42,0.055)] sm:p-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h2 className="text-lg font-black text-slate-950">Platform Activity</h2>
+          <h2 className="text-base font-black text-[#071832]">Platform Activity</h2>
           <p className="mt-1 text-sm text-slate-500">New users and court submissions over the last 7 days.</p>
         </div>
-        <div className="flex gap-3 text-xs font-bold text-slate-600">
+        <div className="flex gap-3 text-xs font-semibold text-slate-600">
           <span className="flex items-center gap-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
+            <span className="h-2 w-2 rounded-full bg-emerald-600" />
             Users
           </span>
           <span className="flex items-center gap-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-lime-400" />
+            <span className="h-2 w-2 rounded-full bg-teal-300" />
             Courts
           </span>
         </div>
       </div>
 
-      <div className="mt-5 overflow-hidden rounded-3xl bg-slate-50 p-3">
-        <svg className="h-64 w-full" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Platform activity chart">
+      <div className="mt-4 overflow-hidden rounded-2xl bg-slate-50/70 p-3">
+        <svg className="h-56 w-full" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Platform activity chart">
           <path d={`M ${padding} ${height - padding} H ${width - padding}`} className="stroke-slate-200" />
           <path d={`M ${padding} ${padding} V ${height - padding}`} className="stroke-slate-200" />
           {[0.25, 0.5, 0.75].map((position) => {
@@ -381,17 +378,17 @@ function ActivityLineChart({ data, isLoading }: { data: ActivityDay[]; isLoading
 
             return <path key={position} d={`M ${padding} ${y} H ${width - padding}`} className="stroke-slate-200/80" />;
           })}
-          <polyline fill="none" points={userPoints.join(" ")} stroke="#10b981" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" />
-          <polyline fill="none" points={courtPoints.join(" ")} stroke="#a3e635" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" />
+          <polyline fill="none" points={userPoints.join(" ")} stroke="#159a68" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.75" />
+          <polyline fill="none" points={courtPoints.join(" ")} stroke="#7dd3bc" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.75" />
           {userPoints.map((point) => {
             const [x, y] = point.split(",").map(Number);
 
-            return <circle key={`user-${point}`} cx={x} cy={y} fill="#10b981" r="4" />;
+            return <circle key={`user-${point}`} cx={x} cy={y} fill="#159a68" r="3.5" />;
           })}
           {courtPoints.map((point) => {
             const [x, y] = point.split(",").map(Number);
 
-            return <circle key={`court-${point}`} cx={x} cy={y} fill="#a3e635" r="4" />;
+            return <circle key={`court-${point}`} cx={x} cy={y} fill="#7dd3bc" r="3.5" />;
           })}
         </svg>
       </div>
@@ -403,7 +400,7 @@ function ActivityLineChart({ data, isLoading }: { data: ActivityDay[]; isLoading
       </div>
 
       {!isLoading && !hasActivity ? (
-        <p className="mt-4 rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">
+        <p className="mt-3 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">
           No new users or court submissions in the last 7 days yet.
         </p>
       ) : null}
@@ -438,18 +435,19 @@ function StatusBarChart({
   const maxValue = Math.max(1, ...data.map((item) => item.value));
 
   return (
-    <article className="rounded-[1.75rem] border border-slate-200/80 bg-white p-5 shadow-sm">
-      <h2 className="text-lg font-black text-slate-950">{title}</h2>
-      <div className="mt-5 space-y-4">
+    <article className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_10px_28px_rgba(15,23,42,0.055)] sm:p-5">
+      <h2 className="text-base font-black text-[#071832]">{title}</h2>
+      <div className="mt-5 flex h-48 items-end gap-3 rounded-2xl bg-slate-50/70 px-3 pb-4 pt-6">
         {data.map((item) => (
-          <div key={item.label}>
-            <div className="flex items-center justify-between text-sm">
-              <span className="font-bold text-slate-700">{item.label}</span>
-              <span className="font-black text-slate-950">{isLoading ? "..." : item.value}</span>
+          <div key={item.label} className="flex h-full flex-1 flex-col items-center justify-end gap-2">
+            <span className="text-xs font-black text-slate-700">{isLoading ? "..." : item.value}</span>
+            <div className="flex h-full w-full items-end">
+              <div
+                className={`mx-auto w-full max-w-10 rounded-t-xl ${item.color}`}
+                style={{ height: item.value === 0 ? "2px" : `${Math.max(8, (item.value / maxValue) * 100)}%` }}
+              />
             </div>
-            <div className="mt-2 h-3 overflow-hidden rounded-full bg-slate-100">
-              <div className={`h-full rounded-full ${item.color}`} style={{ width: `${(item.value / maxValue) * 100}%` }} />
-            </div>
+            <span className="text-[10px] font-semibold text-slate-500 sm:text-xs">{item.label}</span>
           </div>
         ))}
       </div>
@@ -481,14 +479,14 @@ function DonutChart({
       : "#e2e8f0 0% 100%";
 
   return (
-    <article className="rounded-[1.75rem] border border-slate-200/80 bg-white p-5 shadow-sm">
-      <h2 className="text-lg font-black text-slate-950">{title}</h2>
-      <div className="mt-5 flex flex-col items-center gap-5 sm:flex-row xl:flex-col 2xl:flex-row">
+    <article className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_10px_28px_rgba(15,23,42,0.055)] sm:p-5">
+      <h2 className="text-base font-black text-[#071832]">{title}</h2>
+      <div className="mt-5 flex flex-col items-center gap-4 sm:flex-row xl:flex-col 2xl:flex-row">
         <div
-          className="flex h-36 w-36 shrink-0 items-center justify-center rounded-full"
+          className="flex h-32 w-32 shrink-0 items-center justify-center rounded-full"
           style={{ background: `conic-gradient(${gradient})` }}
         >
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white text-xl font-black text-slate-950">
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white text-xl font-black text-[#071832]">
             {isLoading ? "..." : total}
           </div>
         </div>
@@ -499,7 +497,7 @@ function DonutChart({
                 <span className="h-3 w-3 rounded-full" style={{ backgroundColor: item.color }} />
                 {item.label}
               </span>
-              <span className="font-black text-slate-950">{isLoading ? "..." : item.value}</span>
+              <span className="font-black text-[#071832]">{isLoading ? "..." : item.value}</span>
             </div>
           ))}
         </div>
@@ -516,19 +514,19 @@ function RecentActivityCard({
   isLoading: boolean;
 }) {
   return (
-    <article className="rounded-[1.75rem] border border-slate-200/80 bg-white p-5 shadow-sm">
-      <h2 className="text-lg font-black text-slate-950">Recent Activity</h2>
-      <div className="mt-5 space-y-4">
+    <article className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_10px_28px_rgba(15,23,42,0.055)] sm:p-5">
+      <h2 className="text-base font-black text-[#071832]">Recent Activity</h2>
+      <div className="mt-4 space-y-3">
         {isLoading ? (
           <p className="text-sm font-semibold text-slate-500">Loading activity...</p>
         ) : activities.length === 0 ? (
-          <p className="rounded-2xl bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-500">
+          <p className="rounded-xl bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-500">
             No platform activity yet.
           </p>
         ) : (
           activities.map((activity) => (
             <div key={`${activity.type}-${activity.date}-${activity.detail}`} className="flex gap-3">
-              <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
+              <div className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
                 <AdminIcon name={activity.type === "court" ? "court" : "users"} />
               </div>
               <div className="min-w-0">
@@ -558,25 +556,25 @@ function PendingApprovalsCard({
   profileById: Map<string, ProfileRow>;
 }) {
   return (
-    <article className="rounded-[1.75rem] border border-slate-200/80 bg-white p-5 shadow-sm">
+    <article className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_10px_28px_rgba(15,23,42,0.055)] sm:p-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h2 className="text-lg font-black text-slate-950">Pending Court Approvals</h2>
+          <h2 className="text-base font-black text-[#071832]">Pending Court Approvals</h2>
           <p className="mt-1 text-sm text-slate-500">Review new court submissions before they appear publicly.</p>
         </div>
         <Link
           href="/admin/courts?status=pending"
-          className="rounded-full bg-emerald-950 px-4 py-2 text-center text-sm font-black text-lime-200 transition hover:bg-emerald-900"
+          className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-center text-sm font-bold text-slate-700 transition hover:border-emerald-200 hover:text-emerald-700"
         >
           View all pending
         </Link>
       </div>
 
-      <div className="mt-5 grid gap-4 md:grid-cols-2">
+      <div className="mt-4 grid gap-3 md:grid-cols-2">
         {isLoading ? (
           <p className="text-sm font-semibold text-slate-500">Loading pending courts...</p>
         ) : courts.length === 0 ? (
-          <p className="rounded-2xl bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-500">
+          <p className="rounded-xl bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-500">
             No pending court approvals right now.
           </p>
         ) : (
@@ -584,10 +582,10 @@ function PendingApprovalsCard({
             const owner = profileById.get(court.owner_id);
 
             return (
-              <div key={court.id} className="rounded-3xl border border-amber-200 bg-amber-50/50 p-4">
+              <div key={court.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="font-black text-slate-950">{court.name}</h3>
+                    <h3 className="font-black text-[#071832]">{court.name}</h3>
                     <p className="mt-1 text-sm text-slate-600">
                       {court.address}, {court.city}
                     </p>
@@ -596,7 +594,7 @@ function PendingApprovalsCard({
                     {statusLabels[court.status]}
                   </span>
                 </div>
-                <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+                <dl className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
                   <div>
                     <dt className="text-xs font-black uppercase tracking-wide text-slate-400">Owner</dt>
                     <dd className="mt-1 font-semibold text-slate-700">{owner?.full_name || owner?.phone || court.owner_id}</dd>
@@ -619,7 +617,7 @@ function PendingApprovalsCard({
                     type="button"
                     onClick={() => onUpdateStatus(court.id, "approved")}
                     disabled={isSavingId === court.id}
-                    className="rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-black text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+                    className="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300"
                   >
                     Approve
                   </button>
@@ -627,7 +625,7 @@ function PendingApprovalsCard({
                     type="button"
                     onClick={() => onUpdateStatus(court.id, "rejected")}
                     disabled={isSavingId === court.id}
-                    className="rounded-2xl border border-rose-200 bg-white px-4 py-3 text-sm font-black text-rose-700 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:text-slate-400"
+                    className="rounded-xl border border-rose-200 bg-white px-4 py-2.5 text-sm font-bold text-rose-700 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:text-slate-400"
                   >
                     Reject
                   </button>
